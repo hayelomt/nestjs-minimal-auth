@@ -36,11 +36,11 @@ export const LoginForm = () => {
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
     clear();
     startTransition(() => {
-      login(values).then(({ data, error }) => {
-        setError(error);
-        setSuccess(data);
+      login(values).then((param) => {
+        setError(param?.error || null);
+        setSuccess('Login successful');
 
-        if (error) {
+        if (param?.error) {
           return;
         }
 
@@ -73,6 +73,7 @@ export const LoginForm = () => {
                       type="email"
                     />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />

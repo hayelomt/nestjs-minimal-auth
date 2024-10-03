@@ -1,9 +1,11 @@
 'use server';
 
+import { AuthError } from 'next-auth';
 import { LoginSchema } from '@/schemas';
 import { getUserByEmail } from '@/services/auth-service';
 import { z } from 'zod';
-import bcrypt from 'bcrypt';
+import { signIn } from '@/auth';
+import { DEFAULT_REDIRECT_URL } from '@/routes';
 
 export const login = async (values: z.infer<typeof LoginSchema>) => {
   const validated = LoginSchema.safeParse(values);
@@ -19,7 +21,7 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
 
   const user = await getUserByEmail(email);
 
-  if (!user) {
+  if (user === null) {
     return {
       data: null,
       error: 'Invalid credentials',
@@ -33,14 +35,35 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
     };
   }
 
-  const valid = await bcrypt.compare(password, user.password);
+  try {
+    await signIn('credentials', {
+      email,
+      password,
+      redirectTo: DEFAULT_REDIRECT_URL,
+    });
 
-  if (!valid) {
     return {
-      data: null,
-      error: 'Invalid credentials',
+      data: 'Logged in',
+      error: null,
     };
-  }
+  } catch (error) {
+    console.log('Login Error', error);
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case 'CredentialsSignin':
+          return {
+            data: null,
+            error: 'Invalid credentials',
+          };
+        default: {
+          return {
+            data: null,
+            error: 'Something went wrong!',
+          };
+        }
+      }
+    }
 
-  return { data: 'Valid login', error: null };
+    throw error;
+  }
 };
