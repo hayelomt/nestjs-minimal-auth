@@ -2,7 +2,7 @@
 
 import { SignUpSchema } from '@/schemas';
 import { z } from 'zod';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import db from '@/lib/db';
 import { emailExists } from '@/services/auth-service';
 import { sendEmail } from '@/services/email-service';

@@ -4,7 +4,13 @@ import db from '@/lib/db';
 import { verifyEmail } from '@/services/auth-service';
 import { deleteVerificationToken } from '@/services/token-service';
 
-export const verifyToken = async (token: string) => {
+export const verifyToken = async (token?: string) => {
+  if (!token) {
+    return {
+      error: 'Token not found',
+    };
+  }
+
   const verification = await db.verificationToken.findUnique({
     where: { token },
   });

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 const VerifyPage = async ({
   searchParams: { token },
 }: {
-  searchParams: { token: string };
+  searchParams: { token?: string };
 }) => {
   const result = await verifyToken(token);
 
