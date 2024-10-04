@@ -89,3 +89,11 @@ model Authenticator {
 
   @@id([userId, credentialID])
 }
+
+model ResetToken {
+  id String @id @default(cuid())
+
+  email   String   @unique
+  token   String   @unique
+  expires DateTime
+}

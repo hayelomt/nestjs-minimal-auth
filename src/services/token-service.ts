@@ -2,16 +2,20 @@
 
 import db from '@/lib/db';
 import { generateVerificationToken } from './utils-service';
-import { verifyEmail } from './auth-service';
 
 export const setVerificationToken = async (identifier: string) => {
+  const existing = await getTokenByIdentifier(identifier);
+  if (existing) {
+    await deleteVerificationToken(existing.token);
+  }
+
   const token = await generateVerificationToken();
   return db.verificationToken.create({
     data: {
       identifier,
       token,
-      // expires in 1 minutes
-      expires: new Date(Date.now() + 1 * 60 * 1000),
+      // expires in 1 hour
+      expires: new Date(Date.now() + 60 * 60 * 1000),
     },
   });
 };
@@ -22,31 +26,8 @@ export const deleteVerificationToken = (token: string) => {
   });
 };
 
-export const verifyToken = async (token: string) => {
-  const verification = await db.verificationToken.findUnique({
-    where: { token },
+export const getTokenByIdentifier = (identifier: string) => {
+  return db.verificationToken.findFirst({
+    where: { identifier },
   });
-
-  console.log({ verification });
-
-  if (!verification) {
-    return {
-      error: 'Invalid token',
-    };
-  }
-
-  if (new Date() > verification.expires) {
-    return {
-      error: 'Token expired',
-      type: 'expired',
-    };
-  }
-
-  await verifyEmail(verification.identifier);
-
-  await deleteVerificationToken(token);
-
-  return {
-    success: 'Email verified',
-  };
 };

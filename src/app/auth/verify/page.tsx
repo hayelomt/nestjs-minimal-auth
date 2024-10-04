@@ -1,7 +1,13 @@
+import { verifyToken } from '@/actions/verify';
 import { CardWrapper } from '@/components/auth/card-wrapper';
-import { verifyToken } from '@/services/token-service';
-import { redirect } from 'next/navigation';
-import { toast } from 'sonner';
+import { FormError } from '@/components/form-error';
+import { FormSuccess } from '@/components/form-success';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Verify email address',
+  description: 'Verify your email address',
+};
 
 const VerifyPage = async ({
   searchParams: { token },
@@ -10,24 +16,22 @@ const VerifyPage = async ({
 }) => {
   const result = await verifyToken(token);
 
-  if (result.success) {
-    toast.success(result.success);
-    return redirect('/auth/login');
-  }
-
   return (
     <CardWrapper
       headerLabel="Verify email address"
-      backButtonHref="/auth/sign-up"
-      backButtonLabel="Return to sign Up"
+      backButtonHref="/auth/login"
+      backButtonLabel="Back to login"
       showSocial={false}
     >
-      <p className="text-center text-destructive">
-        {result.error || 'An error occurred while verifying your account'}
-      </p>
-      {
-        // result.type && result.type === 'expired' &&
-      }
+      {result.success ? (
+        <FormSuccess message={result.success} />
+      ) : (
+        <FormError
+          message={
+            result.error || 'An error occurred while verifying your account'
+          }
+        />
+      )}
     </CardWrapper>
   );
 };

@@ -6,6 +6,8 @@ import { getUserByEmail } from '@/services/auth-service';
 import { z } from 'zod';
 import { signIn } from '@/auth';
 import { DEFAULT_REDIRECT_URL } from '@/routes';
+import { setVerificationToken } from '@/services/token-service';
+import { sendEmail } from '@/services/email-service';
 
 export const login = async (values: z.infer<typeof LoginSchema>) => {
   const validated = LoginSchema.safeParse(values);
@@ -29,6 +31,20 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
   if (!user.password) {
     return {
       error: 'Password login is not enabled for this account',
+    };
+  }
+
+  if (!user.emailVerified) {
+    const verification = await setVerificationToken(email);
+
+    await sendEmail(
+      email,
+      'Verify your email',
+      `${process.env.NEXT_PUBLIC_APP_URL}/auth/verify?token=${verification.token}`
+    );
+
+    return {
+      data: 'Verification email sent',
     };
   }
 
