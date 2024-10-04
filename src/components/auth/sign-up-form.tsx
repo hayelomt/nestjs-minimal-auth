@@ -37,13 +37,17 @@ export const SignUpForm = () => {
   const onSubmit = (values: z.infer<typeof SignUpSchema>) => {
     clear();
     startTransition(() => {
-      signUp(values).then(({ data, error }) => {
-        setError(error);
-        setSuccess(data);
+      signUp(values).then((data) => {
+        setError(data?.error);
 
-        if (error) {
+        if (data?.error) {
           return;
         }
+
+        setSuccess(
+          data?.message ||
+            'Sign up successful. Please check your email to verify your account'
+        );
 
         form.reset();
       });

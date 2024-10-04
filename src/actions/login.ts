@@ -12,7 +12,6 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
 
   if (!validated.success) {
     return {
-      data: null,
       error: `Invalid fields ${Object.values(validated.error).join(', ')}`,
     };
   }
@@ -23,14 +22,12 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
 
   if (user === null) {
     return {
-      data: null,
       error: 'Invalid credentials',
     };
   }
 
   if (!user.password) {
     return {
-      data: null,
       error: 'Password login is not enabled for this account',
     };
   }
@@ -44,7 +41,6 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
 
     return {
       data: 'Logged in',
-      error: null,
     };
   } catch (error) {
     console.log('Login Error', error);
@@ -52,12 +48,10 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
       switch (error.type) {
         case 'CredentialsSignin':
           return {
-            data: null,
             error: 'Invalid credentials',
           };
         default: {
           return {
-            data: null,
             error: 'Something went wrong!',
           };
         }

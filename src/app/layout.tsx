@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { Toaster } from '@/components/sonner';
+
 import localFont from 'next/font/local';
 import './globals.css';
 
@@ -28,6 +30,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <Toaster position="bottom-left" richColors theme="light" />
         {children}
       </body>
     </html>

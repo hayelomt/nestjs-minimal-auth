@@ -1,12 +1,12 @@
 import { useState } from 'react';
 
 export const useFormMsg = () => {
-  const [success, setSuccess] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | undefined>(undefined);
+  const [error, setError] = useState<string | undefined>(undefined);
 
   const clear = () => {
-    setSuccess(null);
-    setError(null);
+    setSuccess(undefined);
+    setError(undefined);
   };
 
   return {

@@ -8,7 +8,12 @@ export const publicRoutes = ['/'];
  * but are not accessible by authenticated users
  * redirects to DEFAULT_REDIRECT_URL
  */
-export const authRoutes = ['/auth/login', '/auth/sign-up', '/auth/error'];
+export const authRoutes = [
+  '/auth/login',
+  '/auth/sign-up',
+  '/auth/error',
+  '/auth/verify',
+];
 
 /**
  * Api Routes for authentication
